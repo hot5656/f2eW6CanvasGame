@@ -1,0 +1,102 @@
+html,body {
+	margin: 0;
+	background-color: #9A9A9C;
+}
+.game {
+	position: relative;
+	margin: 0 auto;
+	width: 640px;
+	height: 480px;
+	background-color: white;
+}
+
+canvas {
+	background-color: #001D2E;
+}
+
+.title {
+	position: absolute;
+	display: inline-block;
+	color: white;
+	font-size: 20px;
+	left: 20px;
+	top: 100px;	
+}
+.logo {
+	position: absolute;
+	display: inline-block;
+	color: white;
+	left: 20px;
+	top: 10px;	
+	font-size: 90px;
+}
+.note {
+	position: absolute;
+	display: inline-block;
+	right: 20px;
+	bottom: 20px;
+	font-size: 14px;
+	color: rgba(255,255,255,0.6);
+}
+.note div {
+	line-height: 25px;
+}
+.wait {
+	position: absolute;
+	display: inline-block;
+	color: rgba(255,255,255,0.6);
+	left: 0px;
+	bottom: 26px;	
+}
+.wait button{
+	margin-left: 25px;
+	background-color: rgba(255,255,255,0);
+	border: 1px solid rgba(255,255,255,0.6);
+	color: rgba(255,255,255,0.6);
+	border-radius: 6px;
+}
+.wait button:hover {
+	cursor: pointer;
+}
+.wait button:focus {
+	outline: none;
+}
+.counter {
+	position: absolute;
+	display: inline-block;
+	left: 280px;
+	top: 10px;	
+	color: white;
+	font-size: 36px;
+	font-weight: bold;
+}
+.notify {
+	position: absolute;
+	display: inline-block;
+	left: 260px;
+	top: 50px;	
+	color: #F5AF5F;
+}
+.notify p{
+	margin-top: 5px;
+	margin-left: 40px;
+}
+.notify i{
+	/*color: #F5AF5F;*/
+	/*outline: white;*/
+	/*background-color: white;*/
+	/*border: 1px solid  #F5AF5F;*/
+}
+.heart {
+	position: absolute;
+	display: inline-block;
+	right: 20px;
+	top: 40px;	
+/*	color: black;
+	background-color: red;*/
+}
+
+.heart img{
+	width:20px;
+}
+
