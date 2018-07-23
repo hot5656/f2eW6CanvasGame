@@ -64,8 +64,6 @@ class Vec2 {
     return this.x == v.y && this.y == v.y
   }
   get angle() {
-    // console.log("a1 "+ ww/2 + " " + (wh/2-10))
-    // console.log("a2 "+ this.x + " " + this.y)
     return Math.atan2(this.y - (wh/2-10),  this.x - (ww/2+10))
   }
   get unit() {
@@ -117,38 +115,50 @@ class Bullet {
 }
 
 var ship
-var b
+var bullets = []
 
 
 // canvas設定
 function initCanvas() {
   // ww = canvas.width = window.innerWidth
   // wh = canvas.height = window.innerHeight
-  // change canvas size
-  // ww = canvas.width
-  // wh = canvas.height
   ww = canvas.width = 640
   wh = canvas.height = 480
   offextX = (window.innerWidth -640)/2 ;
 
 }
-// initCanvas()
 
 // 邏輯初始化
 function init() {
   ship = new Ship({
     deg: 0*degToPi 
   });
-  b = new Bullet({
-    x: 50,
-    y: 50
-  })
 }
 
 // 遊戲邏輯分析
 function update() {
   time++
-  // b.update()
+
+  if (time%8==0) {
+    // every 1/30 once
+    // 增加子彈
+    var b = new Bullet ({
+      x: ww/2+10+80*Math.sin(ship.deg+Math.PI*90/180),
+      y: wh/2-14+80*Math.cos(ship.deg-Math.PI*90/180),
+      v: {
+        x: Math.cos(ship.deg)*6,
+        y: Math.sin(ship.deg)*6
+      }
+    })
+    bullets.push(b)
+    // max array length = 20
+    if (bullets.length > 20) {
+      // 顯示 array 過長移出
+      bullets.shift()
+    }
+  }
+  // update 顯示 array position
+  bullets.forEach(b=>b.update())
 }
 
 // 畫面更新
@@ -172,8 +182,8 @@ function draw() {
     ctx.stroke()
   }
 
-  // b.draw()
-
+  // 顯示子彈
+  bullets.forEach(b=>b.draw())
   
   // 砲台
   ctx.save()
@@ -219,7 +229,6 @@ function draw() {
     ctx.translate(-9, -68)
     ctx.fillRect(0,0,18,18)
     ctx.fill()
-    // ctx.strokeStyle = "white"
     ctx.beginPath()
     ctx.moveTo(0,0)
     ctx.lineTo(4,-18)
@@ -231,10 +240,11 @@ function draw() {
   // 砲後盾
   ctx.save()
     ctx.translate(ww/2+10, wh/2-10)
+    ctx.rotate(ship.deg);
     ctx.strokeStyle = "white"
     ctx.lineWidth = 3
     ctx.beginPath()
-    ctx.arc(0, 0, 90,  Math.PI*45/180,  Math.PI*135/180)
+    ctx.arc(0, 0, 90,  Math.PI*135/180,  Math.PI*225/180)
     ctx.stroke()
   ctx.restore()
 
@@ -264,7 +274,6 @@ function draw() {
 
   // bar 
   ctx.save()
-    // ctx.lineWidth = 1
     ctx.fillStyle = "#F5AF5F"
     ctx.translate(500, 20)
     ctx.fillRect(0,0,120,10)
@@ -275,7 +284,6 @@ function draw() {
     ctx.translate(120, 350)
     ctx.fillStyle = "#E8465D"
     ctx.beginPath()
-    // ctx.translate(70, 120)
     ctx.rotate(Math.PI*20/180)
     ctx.moveTo(0,0)
     ctx.lineTo(30,0)
@@ -353,7 +361,6 @@ function draw() {
 
   //king hat
   ctx.save()
-    // ctx.rotate(-Math.PI*30/180)
     ctx.fillStyle = "white"
     ctx.translate(420,360)
     ctx.rotate(-Math.PI*30/180)
@@ -388,7 +395,6 @@ function draw() {
     ctx.lineWidth = 2
     ctx.beginPath()
     ctx.translate(500,230)
-    // ctx.arc(0, 0, 80, 0, Math.PI*2)
     ctx.arc(0, 0, 50, Math.PI*61/180, Math.PI*84/180)
     ctx.stroke()
     ctx.beginPath()
@@ -478,8 +484,6 @@ window.addEventListener("mousedown", mousedown)
 function mousemove(evt) {
   mousePos.set(evt.x-offextX, evt.y)
   ship.deg = mousePos.angle;
-  // console.log(mousePos)
-  // console.log(mousePos.angle)
 }
 
 function mouseup(evt) {
