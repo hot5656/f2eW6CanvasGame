@@ -52,7 +52,7 @@ class Vec2 {
     return this.x == v.y && this.y == v.y
   }
   get angle() {
-    return Math.atans(thix.y, this.x)
+    return Math.atans(this.y, this.x)
   }
   get unit() {
     return this.mul(1/this.length)

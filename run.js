@@ -5,12 +5,23 @@ var time = 0
 var bgColor = "#001D2E"
 var ww = 0
 var wh = 0
+var offextX = 0
+var degToPi = Math.PI*2/360
 
 
-
+// -----------------------
 var canvas = document.getElementById("mycanvas")
 var ctx = canvas.getContext("2d")
 
+
+ctx.circle = function(v,r) {
+  this.arc(v.x, v.y, r, 0, Math.PI*2)
+}
+
+ctx.line = function(v1,v2) {
+  this.moveTo(v1.x,v2.y)
+  this.lineTo(v2.x,v2.y)
+}
 
 // -----------------------
 // Vec2
@@ -53,12 +64,60 @@ class Vec2 {
     return this.x == v.y && this.y == v.y
   }
   get angle() {
-    return Math.atans(thix.y, this.x)
+    // console.log("a1 "+ ww/2 + " " + (wh/2-10))
+    // console.log("a2 "+ this.x + " " + this.y)
+    return Math.atan2(this.y - (wh/2-10),  this.x - (ww/2+10))
   }
   get unit() {
     return this.mul(1/this.length)
   }
 }
+
+class Ship {
+  constructor(args) {
+    let def = {
+      x: 0,
+      y: 0,
+      r:50,
+      deg: 50*degToPi 
+    }
+    Object.assign(def,args)
+    Object.assign(this,def)
+  }
+
+  set angle(deg) {
+    this.deg = deg
+  }
+}
+class Bullet {
+  constructor(args) {
+    let def = {
+      x: 0,
+      y: 0,
+      v: {
+        x: 5,
+        y: 5
+      }
+    }
+    Object.assign(def,args)
+    Object.assign(this,def)
+  }
+  update() {
+    this.x+=this.v.x
+    this.y+=this.v.y
+  }
+
+  draw() {
+    ctx.save()
+      ctx.translate(this.x, this.y)
+      ctx.fillStyle="white"
+      ctx.fillRect(0,0,10,10)
+    ctx.restore()
+  }
+}
+
+var ship
+var b
 
 
 // canvas設定
@@ -70,19 +129,26 @@ function initCanvas() {
   // wh = canvas.height
   ww = canvas.width = 640
   wh = canvas.height = 480
+  offextX = (window.innerWidth -640)/2 ;
 
 }
-
-initCanvas()
+// initCanvas()
 
 // 邏輯初始化
 function init() {
-  
+  ship = new Ship({
+    deg: 0*degToPi 
+  });
+  b = new Bullet({
+    x: 50,
+    y: 50
+  })
 }
 
 // 遊戲邏輯分析
 function update() {
   time++
+  // b.update()
 }
 
 // 畫面更新
@@ -106,15 +172,20 @@ function draw() {
     ctx.stroke()
   }
 
+  // b.draw()
 
   
   // 砲台
   ctx.save()
     ctx.translate(ww/2+10, wh/2-10)
+    ctx.rotate(ship.deg);
+    ctx.rotate(Math.PI*90/180)
     ctx.strokeStyle = "white"
     ctx.lineWidth = 8
     ctx.beginPath()
     ctx.arc(0, 0, 40, 0, Math.PI*2)
+    ctx.shadowBlur=12
+    ctx.shadowColor="white"
     ctx.stroke()
 
     ctx.lineWidth = 5
@@ -127,6 +198,8 @@ function draw() {
     ctx.rotate(Math.PI*120/180)
     ctx.moveTo(0,0)
     ctx.lineTo(0,-40)
+    ctx.shadowBlur=12
+    ctx.shadowColor="white"
     ctx.stroke()
 
     ctx.lineWidth = 1
@@ -140,6 +213,8 @@ function draw() {
   // 砲口
   ctx.save()
     ctx.translate(ww/2+10, wh/2-10)
+    ctx.rotate(ship.deg);
+    ctx.rotate(Math.PI*90/180)
     ctx.fillStyle = "white"
     ctx.translate(-9, -68)
     ctx.fillRect(0,0,18,18)
@@ -353,6 +428,24 @@ function draw() {
     ctx.stroke()
   ctx.restore()
 
+  // ------------------------
+  // 滑鼠
+  // ctx.fillStyle = "red"
+  // ctx.beginPath()
+  // ctx.circle(mousePos,3)
+  // ctx.fill()
+  
+  // ctx.save()
+  //   ctx.beginPath()
+  //   ctx.translate(mousePos.x, mousePos.y)
+  //     ctx.strokeStyle = "red"
+  //     let len = 20
+  //     ctx.line(new Vec2(-len,0), new Vec2(len, 0))
+  //     ctx.fillText(mousePos, 10, -10)
+  //     ctx.rotate(Math.PI/2)
+  //     ctx.line(new Vec2(-len,0), new Vec2(len, 0))
+  //     ctx.stroke()
+  // ctx.restore()
 
   requestAnimationFrame(draw)
 }
@@ -369,3 +462,32 @@ function loaded() {
 window.addEventListener("load", loaded)
 
 
+// 載入 縮放的事件
+window.addEventListener("load", loaded)
+window.addEventListener("resize", initCanvas)
+
+// 滑鼠事件跟紀錄
+var mousePos = new Vec2(0,0)
+var mousePosDown = new Vec2(0,0)
+var mousePosUp = new Vec2(0,0)
+
+window.addEventListener("mousemove", mousemove)
+window.addEventListener("mouseup", mouseup)
+window.addEventListener("mousedown", mousedown)
+
+function mousemove(evt) {
+  mousePos.set(evt.x-offextX, evt.y)
+  ship.deg = mousePos.angle;
+  // console.log(mousePos)
+  // console.log(mousePos.angle)
+}
+
+function mouseup(evt) {
+  mousePos.set(evt.x, evt.y)
+  mousePosUp = mousePos.clone()
+}
+
+function mousedown(evt) {
+  mousePos.set(evt.x, evt.y)
+  mousePosDown = mousePos.clone()
+}
